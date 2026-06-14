@@ -3,10 +3,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-
     private Rigidbody rb;
     private Vector3 moveInput;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -14,15 +12,15 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
-        moveInput = new Vector3(horizontal, 0f, vertical);
+        moveInput = new Vector3(horizontal, 0f, vertical).normalized;
     }
 
     void FixedUpdate()
     {
-        Vector3 newPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(newPosition);
+        Vector3 moveOffset = moveInput * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + moveOffset);
     }
 }
