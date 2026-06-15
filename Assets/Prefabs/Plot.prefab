@@ -336,3 +336,7 @@ MonoBehaviour:
   seedLingObject: {fileID: 997410298965351834}
   grownCropObject: {fileID: 276153165813900614}
   growTime: 5
+  wateredDuration: 5
+  wateredGrowMultiplier: 2
+  cropItemprefab: {fileID: 8295800881970195384, guid: 66a5b7753176b02448fce1a113b0b2cc,
+    type: 3}

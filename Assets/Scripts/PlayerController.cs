@@ -1,8 +1,11 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    public float rotateSpeed = 10f;
+
     private Rigidbody rb;
     private Vector3 moveInput;
     void Start()
@@ -20,7 +23,21 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 moveOffset = moveInput * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(rb.position + moveOffset);
+        Vector3 velocity = moveInput * moveSpeed;
+        velocity.y = rb.velocity.y;
+
+        rb.velocity = velocity;
+
+        if (moveInput != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveInput);
+            Quaternion smoothRotation = Quaternion.Slerp(
+                rb.rotation,
+                targetRotation,
+                rotateSpeed * Time.fixedDeltaTime
+            );
+
+            rb.MoveRotation(smoothRotation);
+        }
     }
 }

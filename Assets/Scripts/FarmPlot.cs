@@ -20,6 +20,7 @@ public class FarmPlot : MonoBehaviour,IInteractable
     public float growTime = 20f;
     public float wateredDuration = 5f;
     public float wateredGrowMultiplier = 2f;
+    public CarryItem cropItemprefab;
 
     private Renderer plotRenderer;
     private float growTimer;
@@ -58,24 +59,15 @@ public class FarmPlot : MonoBehaviour,IInteractable
     {
         CarryItem currentItem = playerCarry.GetCurrentItem();
 
-        if (currentItem == null && state == PlotState.Empty)
+        if (currentItem == null)
         {
-            Debug.Log("你需要一个工具");
-            return;
-        }
-        else if (currentItem == null && state == PlotState.Tilled)
-        {
-            Debug.Log("你需要一袋种子");
-            return;
-        }
-        else if (currentItem == null && state == PlotState.Planted)
-        {
-            Debug.Log("你可以用浇水壶灌溉已种植的土地");
-            return;
-        }
-        else if (currentItem == null && state == PlotState.Grown)
-        {
-            Debug.Log("可收获！但还未实现");
+            if (state == PlotState.Grown)
+            {
+                Harvest(playerCarry);
+                return;
+            }
+
+            Debug.Log("你需要拿着工具或种子才能互动");
             return;
         }
         
@@ -104,6 +96,8 @@ public class FarmPlot : MonoBehaviour,IInteractable
             return;
         }
 
+        Debug.Log("现在不能这样互动");
+
     }
 
     void Grown()
@@ -111,6 +105,31 @@ public class FarmPlot : MonoBehaviour,IInteractable
         state = PlotState.Grown;
         UpdateVisual();
         Debug.Log("作物已成熟");
+    }
+
+    void Harvest(PlayerCarry playerCarry)
+    {
+        growTimer = 0f;
+        UpdateVisual();
+
+        if (cropItemprefab != null)
+        {
+            Vector3 spawnPosition = transform.position + Vector3.up * 3f;
+
+            CarryItem carryItem = Instantiate
+            (
+                cropItemprefab, 
+                spawnPosition, 
+                Quaternion.identity
+            );
+
+            playerCarry.PickUp(carryItem);
+        }
+
+        state = PlotState.Tilled;
+        UpdateVisual();
+        Debug.Log("收获成功");
+
     }
 
     void UpdateVisual()
